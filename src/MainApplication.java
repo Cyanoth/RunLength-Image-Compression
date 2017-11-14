@@ -9,7 +9,7 @@ public class MainApplication {
     public static void main(String[] args){
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\LineTest.bmp"));
+            img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\MultiLineTest.bmp"));
             Compression.runCompressImage(img);
 
 
