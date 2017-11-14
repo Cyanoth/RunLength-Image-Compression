@@ -12,31 +12,36 @@ public class MainApplication {
             img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\LineTest.bmp"));
             int imgWidth = img.getWidth();
             int imgHeight = img.getHeight();
-            int pixelArray[][] = new int[imgWidth][imgHeight]; //Instantiate two arrays WxH
 
             String runLengthEncoding = "";
             int rangeLimit = 2;
 
-            for (int x = 0; x < imgWidth -3; x++) //TODO: Change from -3 (temp stop out of bounds)
-            {
+            System.out.println("width is: " + imgWidth);
+
+            for (int x = 0; x < imgWidth; x++) {
                 int tmpRunCounter = 1;
-                int curPixelValue = img.getRGB(x, 0);
+                int curPixelValue = img.getRGB(x, 0); //TODO: Replace with a function
                 curPixelValue = (curPixelValue >> 16) & 0x000000FF; //[REF 1]
 
-                    for (int ix = x+1; ix < imgWidth -1; ix++) //TODO: change from -1 (temp stop out of bounds)
-                    {
+                for (int ix = x + 1; ix < imgWidth + 1; ix++) {
+
+                    if (ix == imgWidth) {
+                        x = imgWidth;
+                        break;
+                    } else {
                         int thisPixelValue = img.getRGB(ix, 0);
                         thisPixelValue = (thisPixelValue >> 16) & 0x000000FF;
 
-                        if (Math.abs(curPixelValue - thisPixelValue) <= 2)
+                        if (Math.abs(curPixelValue - thisPixelValue) <= rangeLimit)
                             tmpRunCounter++;
-                        else
-                        {
-                            runLengthEncoding += curPixelValue + "|" + tmpRunCounter + "|";
-                            x = ix;
+                        else {
+                            x = ix - 1;
                             break;
                         }
                     }
+                }
+
+                runLengthEncoding += curPixelValue + "|" + tmpRunCounter + "|";
             }
 
             System.out.println(runLengthEncoding);
