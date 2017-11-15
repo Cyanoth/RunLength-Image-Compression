@@ -8,9 +8,12 @@ public class MainApplication {
 
     public static void main(String[] args){
         BufferedImage img = null;
+        ImgCompressed compressedImage;
+
         try {
             img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\MultiLineTest.bmp"));
-            Compression.runCompressionAlg(img);
+
+            compressedImage = Compression.runCompressionAlg(img);
 
 
 

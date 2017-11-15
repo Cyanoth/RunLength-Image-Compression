@@ -5,12 +5,11 @@ public class Compression {
     private static final int RANGE_LIMIT = 4; //TODO: Move this so its user selectable option (compression quality)
 
 
-    public static void runCompressionAlg(BufferedImage img) {
+    public static ImgCompressed runCompressionAlg(BufferedImage img) {
         System.out.println("Running Compression...");
 
         int imgWidth = img.getWidth();
         int imgHeight = img.getHeight();
-        //TODO: Need to store width/height with the file?
 
         ByteArrayOutputStream redArr = new ByteArrayOutputStream();
         ByteArrayOutputStream greenArr = new ByteArrayOutputStream();
@@ -20,7 +19,11 @@ public class Compression {
         compressToByteArr(img, greenArr, 'G', imgHeight, imgWidth);
         compressToByteArr(img, blueArr, 'B', imgHeight, imgWidth);
 
-        System.out.println("Compession Algorithm Completed!");
+        ImgCompressed resImg = new ImgCompressed(imgHeight, imgWidth, redArr.toByteArray(), greenArr.toByteArray(), blueArr.toByteArray());
+        System.out.println("Compression Algorithm Completed!");
+
+        return resImg;
+
     }
 
     private static void compressToByteArr(BufferedImage img, ByteArrayOutputStream useStream, char colourCode, int imgHeight, int imgWidth) {
@@ -72,7 +75,6 @@ public class Compression {
                 break;
 
         }
-
         return (byte) resVal;
     }
 
