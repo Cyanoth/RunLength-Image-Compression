@@ -10,7 +10,7 @@ public class MainApplication {
         BufferedImage img = null;
         try {
             img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\MultiLineTest.bmp"));
-            Compression.runCompressImage(img);
+            Compression.runCompressionAlg(img);
 
 
 

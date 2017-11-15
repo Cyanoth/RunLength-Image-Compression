@@ -2,49 +2,58 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 
 public class Compression {
-    private static final int RANGE_LIMIT = 4;
+    private static final int RANGE_LIMIT = 4; //TODO: Move this so its user selectable option (compression quality)
 
 
-    public static void runCompressImage(BufferedImage img)
-    {
+    public static void runCompressionAlg(BufferedImage img) {
         System.out.println("Running Compression...");
 
         int imgWidth = img.getWidth();
         int imgHeight = img.getHeight();
+        //TODO: Need to store width/height with the file?
 
         ByteArrayOutputStream redArr = new ByteArrayOutputStream();
+        ByteArrayOutputStream greenArr = new ByteArrayOutputStream();
+        ByteArrayOutputStream blueArr = new ByteArrayOutputStream();
 
+        compressToByteArr(img, redArr, 'R', imgHeight, imgWidth);
+        compressToByteArr(img, greenArr, 'G', imgHeight, imgWidth);
+        compressToByteArr(img, blueArr, 'B', imgHeight, imgWidth);
 
-        for (int y = 0; y <imgHeight; y++) {
+        System.out.println("Compession Algorithm Completed!");
+    }
+
+    private static void compressToByteArr(BufferedImage img, ByteArrayOutputStream useStream, char colourCode, int imgHeight, int imgWidth) {
+        for (int y = 0; y < imgHeight; y++) {
             for (int x = 0; x < imgWidth; x++) {
                 int tmpRunCounter = 1;
-                byte curPixelValue = getColourLevel(img, 'R', x, y);
+                byte curPixelValue = getColourLevel(img, colourCode, x, y);
 
                 for (int ix = x + 1; ix < imgWidth + 1; ix++) {
                     if (ix == imgWidth) {
                         x = imgWidth;
                         break;
                     } else {
-                        int nextPixelValue = getColourLevel(img, 'R', ix, y);
+                        int nextPixelValue = getColourLevel(img, colourCode, ix, y);
 
                         if (Math.abs(curPixelValue - nextPixelValue) <= RANGE_LIMIT)
-                            tmpRunCounter++;
+                            tmpRunCounter++; //TODO: Ensure tmpRunCounter doesn't exceed 255 (byte limit!)
                         else {
                             x = ix - 1;
                             break;
                         }
                     }
                 }
-                redArr.write(curPixelValue);
-                redArr.write(tmpRunCounter);
+                useStream.write(curPixelValue);
+                useStream.write(tmpRunCounter);
             }
         }
 
-        System.out.println("Compression Finished! Size Red Array: " + redArr.size());
+        System.out.println("Completed Compression on colour: " + colourCode + " | Size: " + useStream.size());
     }
 
-    private static byte getColourLevel(BufferedImage img, char getWhichRGB, int x, int y)
-    {
+
+    private static byte getColourLevel(BufferedImage img, char getWhichRGB, int x, int y) {
         int pixVal = img.getRGB(x, y);
         int resVal = 0;
 
