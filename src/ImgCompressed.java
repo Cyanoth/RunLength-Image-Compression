@@ -1,5 +1,4 @@
 public class ImgCompressed {
-
     private int imgHeight;
     private int imgWidth;
     private byte[] redRLCompressed;
@@ -22,12 +21,27 @@ public class ImgCompressed {
         System.out.println("Size of image (amount of bytes): " + totalByteSize);
     }
 
-    public static int gettotalByteSize()
+    public int gettotalByteSize()
     {
-        return gettotalByteSize();
+        return totalByteSize;
     }
 
-    public static void outputToFile(String toPath)
+    public byte[] getRedCompressed() //TODO: Merge into one function (Red/Green/Blue)
+    {
+        return redRLCompressed;
+    }
+
+    public int getImgWidth()
+    {
+        return imgWidth;
+    }
+
+    public int getImgHeight()
+    {
+        return imgHeight;
+    }
+
+    public void outputToFile(String toPath)
     {
         //TODO
     }

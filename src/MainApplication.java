@@ -11,12 +11,10 @@ public class MainApplication {
         ImgCompressed compressedImage;
 
         try {
-            img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\MultiLineTest.bmp"));
+            img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\LineTest.bmp"));
 
             compressedImage = Compression.runCompressionAlg(img);
-
-
-
+            Decompression.runDecompressAlg(compressedImage);
 
 
         }
