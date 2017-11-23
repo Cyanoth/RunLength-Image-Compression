@@ -15,18 +15,18 @@ public class Compression {
         ByteArrayOutputStream greenArr = new ByteArrayOutputStream();
         ByteArrayOutputStream blueArr = new ByteArrayOutputStream();
 
-        compressToByteArr(img, redArr, 'R', imgHeight, imgWidth);
-        compressToByteArr(img, greenArr, 'G', imgHeight, imgWidth);
-        compressToByteArr(img, blueArr, 'B', imgHeight, imgWidth);
+        compressToByteArr(img, redArr, 'R', imgWidth, imgHeight);
+        compressToByteArr(img, greenArr, 'G', imgWidth, imgHeight);
+        compressToByteArr(img, blueArr, 'B', imgWidth, imgHeight);
 
-        ImgCompressed resImg = new ImgCompressed(imgHeight, imgWidth, redArr.toByteArray(), greenArr.toByteArray(), blueArr.toByteArray());
+        ImgCompressed resImg = new ImgCompressed(imgWidth, imgHeight, redArr.toByteArray(), greenArr.toByteArray(), blueArr.toByteArray());
         System.out.println("Compression Algorithm Completed!");
 
         return resImg;
 
     }
 
-    private static void compressToByteArr(BufferedImage img, ByteArrayOutputStream useStream, char colourCode, int imgHeight, int imgWidth) {
+    private static void compressToByteArr(BufferedImage img, ByteArrayOutputStream useStream, char colourCode, int imgWidth, int imgHeight) {
         for (int y = 0; y < imgHeight; y++) {
             for (int x = 0; x < imgWidth; x++) {
                 int tmpRunCounter = 1;
@@ -53,6 +53,7 @@ public class Compression {
         }
 
         System.out.println("Completed Compression on colour: " + colourCode + " | Size: " + useStream.size());
+        //TODO: Show Compression Ratio (original file to compressed file)
     }
 
 

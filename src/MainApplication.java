@@ -22,13 +22,17 @@ public class MainApplication {
             ImageDecoder ppmImgDecoder = ImageCodec.createImageDecoder("PNM", new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Images\\1.ppm"), null);
             BufferedImage img = new RenderedImageAdapter(ppmImgDecoder.decodeAsRenderedImage()).getAsBufferedImage();
 
+            img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Images\\outputs\\orginalLen.bmp"));
             compressedImage = Compression.runCompressionAlg(img);
-            //Decompression.runDecompressAlg(compressedImage);
-            
+            compressedImage.outputToFile("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Images\\outputs\\", "testing");
+            Decompression.runDecompressAlg(compressedImage);
+
         }
         catch (IOException e) {
             System.out.println("An error occurred - Failed to load image!\n" + e);
         }
     }
+
+    //TODO: Load Compressed Image from File.
 
 }
