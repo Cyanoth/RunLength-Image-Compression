@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jai_codec">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jai_codec.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jai_core.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/mlibwrapper_jai.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
