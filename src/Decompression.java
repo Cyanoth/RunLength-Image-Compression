@@ -56,6 +56,7 @@ public class Decompression {
 
                 for (int rx = 0; rx < runLength; rx++) { //Up to the run length, set the colour level
                     decompressedColourLevel[xpos++][ypos] = colourValue & 0xFF;
+
                 }
             }
         }

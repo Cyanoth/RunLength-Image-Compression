@@ -1,3 +1,5 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -71,12 +73,21 @@ public class ImgCompressed {
             fos.write(Integer.toString(imgHeight).getBytes());
             fos.write(",".getBytes());
             fos.write(Integer.toString(compressLevel).getBytes());
+            fos.write(",".getBytes());
+            fos.write(Integer.toString(redRLCompressed.length + 1).getBytes());
+            fos.write(",".getBytes());
+            fos.write(Integer.toString(greenRLCompressed.length + 1).getBytes());
+            fos.write(",".getBytes());
+            fos.write(Integer.toString(blueRLCompressed.length +1).getBytes());
             fos.write("\n".getBytes());
             fos.write(redRLCompressed);
+            System.out.println(redRLCompressed.length);
             fos.write("\n".getBytes());
             fos.write(greenRLCompressed);
+            System.out.println(greenRLCompressed.length);
             fos.write("\n".getBytes());
             fos.write(blueRLCompressed);
+            System.out.println(blueRLCompressed.length);
 
             fos.close();
             System.out.println("The compressed image file was written to the disk successfully (" + toPath + "CompressedOutput.ckcomp" + ")");
@@ -87,9 +98,5 @@ public class ImgCompressed {
         }
     }
 
-    public void readCompressedImageFile(String compressedPath)
-    {
-        //TODO
-    }
 
 }

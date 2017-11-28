@@ -7,8 +7,8 @@ import javax.imageio.ImageIO;
 import javax.media.jai.*;
 import javax.swing.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class MainApplication {
@@ -18,6 +18,7 @@ public class MainApplication {
         //Ask user to compress an image or load a compressed image.
         System.out.println("Charles Knight - Image Compression & Decompression");
         System.out.print("\n\t 1. Run Compression & Decompression Process \n\t 2. Load & Decompress a compressed image " + "\nSelect Option: ");
+
         Scanner scanner = new Scanner(System.in);
         int uChoice = scanner.nextInt();
 
@@ -26,7 +27,7 @@ public class MainApplication {
                 compressImage();
                 break;
             case 2:
-                loadImageFromDisk();
+                loadImageFromDisk("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Images\\output\\CompressedOutput.ckcomp");
                 break;
             default:
                 System.out.println("No option selected, exiting...");
@@ -77,10 +78,10 @@ public class MainApplication {
 
         compressedImage = Compression.runCompressionAlg(img, compressRate); //Run Compression Algorithm
         compareImageSize(imgPath, compressedImage); //Show the compression ration
-        compressedImage.outputToFile(fd.getDirectory() + "\\output\\"); //Output the compressed image to a file (ckcomp file)
+        compressedImage.outputToFile(fd.getDirectory() + "output\\"); //Output the compressed image to a file (ckcomp file)
 
         System.out.println("------------------------------------------------------------------------");
-        Decompression.runDecompressAlg(fd.getDirectory() + "\\output\\", compressedImage); //Run Decompression Algorithm
+        //Decompression.runDecompressAlg(fd.getDirectory() + "\\output\\", compressedImage); //Run Decompression Algorithm
     }
 
 
@@ -106,10 +107,48 @@ public class MainApplication {
         System.out.println("**********************************************");
     }
 
-    private static ImgCompressed loadImageFromDisk()
-    {
-        //TODO
-        return null;
+    /**
+     * Load a compressed file from the disk
+     * @param compressedImgPath Path to compressed Image file
+     * @return A Compressed Image Memory Object (not used however)
+     */
+    private static ImgCompressed loadImageFromDisk(String compressedImgPath) {
+        /* IMPORANT TO NOTE: Potential off-by-ones. Make sure when read to increment lengths by 1 to ensure correct byte is read!!!*/
+        BufferedReader firstLineReader;
+        ImgCompressed compressedImg = null;
+
+        byte[] redArray;
+        byte[] greenArray;
+        byte[] blueArray;
+
+        try {
+            firstLineReader = new BufferedReader(new FileReader(compressedImgPath));
+            String firstLineText = firstLineReader.readLine();
+            String[] picOptionsArr = firstLineText.split(","); //Gives first line of file in array: [width, height, compressLevel, redLen, greenLen, blueLen]
+
+            int imgWidth = Integer.parseInt(picOptionsArr[0]);
+            int imgHeight = Integer.parseInt(picOptionsArr[1]);
+            int compressLevel = Integer.parseInt(picOptionsArr[2]);
+            redArray = new byte[Integer.parseInt(picOptionsArr[3])];
+            greenArray = new byte[Integer.parseInt(picOptionsArr[4])]; //Set length of colour-level byte arrays from the pic options.
+            blueArray = new byte[Integer.parseInt(picOptionsArr[5])];
+
+            FileInputStream fis = new FileInputStream(compressedImgPath); //Create Byte Stream Array Reader
+            long skip = fis.skip(firstLineText.getBytes().length + 1); //Ignore the first-line (skip the byte length), since we have the picOptions already
+            /* Read each colour level byte array */
+            fis.read(redArray);
+            fis.read(greenArray);
+            fis.read(blueArray);
+            compressedImg = new ImgCompressed(imgWidth, imgHeight, redArray, greenArray, blueArray, compressLevel);
+            Decompression.runDecompressAlg("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Images\\output", compressedImg);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return compressedImg;
     }
 
 }
