@@ -8,7 +8,6 @@ import javax.media.jai.*;
 import javax.swing.*;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class MainApplication {
@@ -16,8 +15,8 @@ public class MainApplication {
     public static void main(String[] args) {
 
         //Ask user to compress an image or load a compressed image.
-        System.out.println("Charles Knight - Image Compression & Decompression");
-        System.out.print("\n\t 1. Run Compression & Decompression Process \n\t 2. Load & Decompress a compressed image " + "\nSelect Option: ");
+        System.out.println("Charles Knight - Image Compression & Decompression ");
+        System.out.print("\n\t 1. Run Compression & Decompression Process (FROM MEMORY) \n\t 2. Load & Decompress a compressed image (FROM DISK)" + "\nSelect Option: ");
 
         Scanner scanner = new Scanner(System.in);
         int uChoice = scanner.nextInt();
@@ -75,13 +74,18 @@ public class MainApplication {
         System.out.print("Please enter a compression rate (0 = Lossless TO 10(+) = High Compression Rate, Lower Quality: ");
         Scanner scanner = new Scanner(System.in);
         int compressRate = scanner.nextInt();
-
         compressedImage = Compression.runCompressionAlg(img, compressRate); //Run Compression Algorithm
         compareImageSize(imgPath, compressedImage); //Show the compression ration
         compressedImage.outputToFile(fd.getDirectory() + "output\\"); //Output the compressed image to a file (ckcomp file)
 
+
         System.out.println("------------------------------------------------------------------------");
-        //Decompression.runDecompressAlg(fd.getDirectory() + "\\output\\", compressedImage); //Run Decompression Algorithm
+        System.out.println("Press any key to run decompression algorithm FROM MEMORY...");
+
+        Scanner pauser = new Scanner(System.in);
+        pauser.nextLine();
+        pauser.close();
+        Decompression.runDecompressAlg(fd.getDirectory() + "\\output\\", compressedImage); //Run Decompression Algorithm
     }
 
 
