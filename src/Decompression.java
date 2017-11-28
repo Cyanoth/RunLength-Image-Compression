@@ -8,14 +8,13 @@ public class Decompression {
 
     public static void runDecompressAlg(ImgCompressed objCompressedImage)
     {
-
         System.out.println("Starting Decompression Algorithm");
         int imgWidth = objCompressedImage.getImgWidth();
         int imgHeight = objCompressedImage.getImgHeight();
 
-        int[][] redDecompressed = decompressColourLevel(objCompressedImage,'R', imgWidth, imgHeight);
-        int[][] greenDecompressed = decompressColourLevel(objCompressedImage, 'G', imgWidth, imgHeight);
-        int[][] blueDecompressed = decompressColourLevel(objCompressedImage, 'B', imgWidth, imgHeight);
+        int[][] redDecompressed = decompressColourLevel(objCompressedImage.getRedCompressed(), imgWidth, imgHeight);
+        int[][] greenDecompressed = decompressColourLevel(objCompressedImage.getGreenCompressed(), imgWidth, imgHeight);
+        int[][] blueDecompressed = decompressColourLevel(objCompressedImage.getBlueCompressed(), imgWidth, imgHeight);
 
 
         int[][] rgbDecompressed = new int[imgWidth][imgHeight];
@@ -24,10 +23,8 @@ public class Decompression {
         {
             for (int cX = 0; cX < imgWidth; cX++)
             {
-                int rgb = redDecompressed[cX][cY];
-                rgb = (rgb << 8) + greenDecompressed[cX][cY];
-                rgb = (rgb << 8) + blueDecompressed[cX][cY];
-                rgbDecompressed[cX][cY] = rgb;
+                Color test = new Color(redDecompressed[cX][cY],  greenDecompressed[cX][cY], blueDecompressed[cX][cY]);
+                rgbDecompressed[cX][cY] = test.getRGB();
             }
         }
 
@@ -41,40 +38,30 @@ public class Decompression {
         System.out.println("Decompression Algorithm Finished");
     }
 
-    private static int[][] decompressColourLevel(ImgCompressed compressedImgObj, char getWhichRGB, int imgWidth, int imgHeight)
+    private static int[][] decompressColourLevel(byte[] compressedColourArray, int imgWidth, int imgHeight)
     {
         int[][] decompressedColourLevel = new int[imgWidth][imgHeight];
-        byte[] compressedColourArray;
-
-        switch (getWhichRGB) {
-            case 'R':
-                compressedColourArray = compressedImgObj.getRedCompressed();
-                break;
-            case 'G':
-                compressedColourArray = compressedImgObj.getGreenCompressed();
-                break;
-            case 'B':
-                compressedColourArray = compressedImgObj.getBlueCompressed();
-                break;
-            default: //todo return error
-                return null;
-        }
 
         int curSelectedByte = 0;
 
         for (int ypos = 0; ypos < imgHeight; ypos++) {
+
+
             for (int xpos = 0; xpos < imgWidth; ) {
-                byte colourValue = compressedColourArray[curSelectedByte++];
-                byte runLength = compressedColourArray[curSelectedByte++];
-                System.out.println("Colour value: " + colourValue + " (" + (255 + colourValue) + ") | Run Length: " + runLength);
+
+
+
+                int colourValue = compressedColourArray[curSelectedByte++];
+                int runLength = Byte.toUnsignedInt(compressedColourArray[curSelectedByte++]);
+
 
                 for (int rx = 0; rx < runLength; rx++) {
-                    System.out.println("XPos: " + xpos + " | Rx: " + rx);
+                   // System.out.println("XPos: " + xpos + " | Rx: " + rx  +  " RunLength: " + runLength +  " YPos: " + ypos);
                     decompressedColourLevel[xpos++][ypos] = colourValue & 0xFF;
-
                 }
-
+                //xpos += runLength;
             }
+
         }
 
         return decompressedColourLevel;
@@ -90,6 +77,7 @@ public class Decompression {
         for (int y = 0; y < imgHeight; y++) {
             for (int x = 0; x < imgWidth; x++) {
                 imgOutput.setRGB(x, y, rgbDecompressed[x][y]);
+
             }
         }
         ImageIO.write(imgOutput, "bmp", outputFile);

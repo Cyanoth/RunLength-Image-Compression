@@ -1,15 +1,12 @@
 import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageDecoder;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import javax.media.jai.*;
 
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
-import java.util.Arrays;
 
 public class MainApplication {
 
@@ -19,10 +16,10 @@ public class MainApplication {
 
 
         try {
-            ImageDecoder ppmImgDecoder = ImageCodec.createImageDecoder("PNM", new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Images\\1.ppm"), null);
+            ImageDecoder ppmImgDecoder = ImageCodec.createImageDecoder("PNM", new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Images\\2.ppm"), null);
             BufferedImage img = new RenderedImageAdapter(ppmImgDecoder.decodeAsRenderedImage()).getAsBufferedImage();
 
-            img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Images\\outputs\\orginalLen.bmp"));
+            //img = ImageIO.read(new File("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Lenna.bmp"));
             compressedImage = Compression.runCompressionAlg(img);
             compressedImage.outputToFile("C:\\Users\\Charlie\\IdeaProjects\\ImageCompression\\res\\Images\\outputs\\", "testing");
             Decompression.runDecompressAlg(compressedImage);

@@ -1,12 +1,6 @@
-import com.sun.media.jai.codec.ImageCodec;
-import com.sun.media.jai.codec.ImageEncoder;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+
 
 public class ImgCompressed {
     private int imgHeight;
@@ -39,6 +33,15 @@ public class ImgCompressed {
     public byte[] getRedCompressed() //TODO: Merge into one function (Red/Green/Blue)
     {
         return redRLCompressed;
+    }
+
+
+    public byte[] getGreenCompressed() {
+        return greenRLCompresed;
+    }
+
+    public byte[] getBlueCompressed() {
+        return blueRLCompressed;
     }
 
     public int getImgWidth()
@@ -76,11 +79,4 @@ public class ImgCompressed {
         }
     }
 
-    public byte[] getGreenCompressed() {
-        return greenRLCompresed;
-    }
-
-    public byte[] getBlueCompressed() {
-        return blueRLCompressed;
-    }
 }
