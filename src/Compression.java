@@ -1,21 +1,33 @@
+import javax.swing.plaf.ColorUIResource;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 
 public class Compression {
-    private static final int RANGE_LIMIT = 5; //TODO: Move this so its user selectable option (compression quality)
+     private static int rangeLimit = 5;
 
-
-    public static ImgCompressed runCompressionAlg(BufferedImage img) {
-        System.out.println("Running Compression...");
+    /**
+     * Constructor for the compression functions
+     * @param img - A Java BufferedImage already loaded from disk
+     * @param rangelimit Maximum colour difference allowed between next pixel (default 5)
+     * @return A compressed image object in memory
+     */
+    public static ImgCompressed runCompressionAlg(BufferedImage img, int rangelimit) {
+        System.out.println("Running Compression Algorithm...");
 
         int imgWidth = img.getWidth();
         int imgHeight = img.getHeight();
+        rangeLimit = rangelimit;
 
+        /* Compress each colour stream (Red, Green, Blue) */
+        System.out.println("--------------------------------------");
         ByteArrayOutputStream redArr =  compressToByteArr(img, 'R', imgWidth, imgHeight);
         ByteArrayOutputStream greenArr = compressToByteArr(img, 'G', imgWidth, imgHeight);
         ByteArrayOutputStream blueArr = compressToByteArr(img, 'B', imgWidth, imgHeight);
+        System.out.println("--------------------------------------");
 
-        ImgCompressed resImg = new ImgCompressed(imgWidth, imgHeight, redArr.toByteArray(), greenArr.toByteArray(), blueArr.toByteArray());
+        //Create compress image in memory with the compress colour streams
+        ImgCompressed resImg = new ImgCompressed(imgWidth, imgHeight, redArr.toByteArray(), greenArr.toByteArray(), blueArr.toByteArray(), rangelimit);
         System.out.println("Compression Algorithm Completed!");
 
         return resImg;
@@ -24,61 +36,64 @@ public class Compression {
     private static ByteArrayOutputStream compressToByteArr(BufferedImage img, char colourCode, int imgWidth, int imgHeight) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        for (int y = 0; y < imgHeight; y++) { //Iterate over each column
+        for (int y = 0; y < imgHeight; y++) { //Iterate over each Y column in the image.
             for (int x = 0; x < imgWidth; x++) {
-                int runCounter = 1; //Run Length
+                int runCounter = 1; //Run Length Counter
                 int pixelColourCounter = getColourLevel(img, colourCode, x, y); //Keep count of pixel values (for mean value)
+                byte curPixelValue = getColourLevel(img, colourCode, x, y); //Used to compare the next pixel colour value with this.
 
-                byte curPixelValue = getColourLevel(img, colourCode, x, y); //Compare next pixel value to this.
-
-                for (int ix = x + 1; ix < imgWidth + 1; ix++) {
+                for (int ix = x + 1; ix < imgWidth + 1; ix++) { //For each next pixel from x -> imgwidth or to runlength.
                     if (ix == imgWidth) {
-                        x = imgWidth; //Stop this row if its reached the end of image (x)
+                        x = imgWidth; //Break row if its reached the end of image width.
                         break;
                     } else {
                         byte nextPixelValue = getColourLevel(img, colourCode, ix, y);
 
-                        if ((Math.abs(curPixelValue - nextPixelValue) <= RANGE_LIMIT) && runCounter < 200) { //Compare next pixel value, if its within range limit use it.
-                            runCounter++; //Increment run length
-                            pixelColourCounter += nextPixelValue; //Add to pixel colour counter
+                        /* Compare next pixel colour value, if its within range limit then include it.
+                         * BUGFIX: Limit runCounter to maximum 200 (prevent exceeding image boundaries)
+                         */
+                        if ((Math.abs(curPixelValue - nextPixelValue) <= rangeLimit) && runCounter < 200) {
+                            runCounter++; //Increment the run length counter
+                            pixelColourCounter += nextPixelValue; //Add this pixel to colour counter
                         }
-                        else { //Next Pixel not within range, so start next X.
+                        else { //Else Next Pixel is not within range limit, so start next break and start new..
                             x = ix - 1;
                             break;
                         }
                     }
                 }
-                output.write((int) Math.floor(pixelColourCounter / runCounter)); //Write to byte stream the mean value & RunLength
+
+                //Write to 'ByteStream Array': [meanColourValue, runLength, meanColourValue, runLength...]
+                output.write((int) Math.floor(pixelColourCounter / runCounter)); //Calculate and Write Mean Value then RunLength
                 output.write((byte) runCounter);
             }
         }
 
         System.out.println("Completed Compression on colour: " + colourCode + " | Size: " + output.size());
         return output;
-        //TODO: Show Compression Ratio (original file to compressed file)
     }
 
-
+    /**
+     * Gets the value of a colour level (0 - 255)
+     * @param img A Java BufferedImage loaded already from disk
+     * @param getWhichRGB Specify character: R = Red, B = Blue, G = Green
+     * @param x X Corrd
+     * @param y Y Corrd
+     * @return Byte range 0-255 for colour level at x,y
+     */
     private static byte getColourLevel(BufferedImage img, char getWhichRGB, int x, int y) {
-        int pixVal = img.getRGB(x, y);
-        int resVal = 0;
+        Color getColour = new Color(img.getRGB(x, y));
 
-        switch (getWhichRGB) {
-            case 'R':
-                resVal = (pixVal >> 16) & 0xFF; //[REF 1]
-                break;
-            case 'G':
-                resVal = (pixVal >> 8) & 0xFF; //[REF 1]
-                break;
-            case 'B':
-                resVal = pixVal & 0xFF; //[REF 1]
-                break;
-            default:
-                System.out.println("WARNING! Invalid RGB Selector!!!");
-                break;
-
-        }
-        return (byte) resVal;
+          switch (getWhichRGB) {
+              case 'R':
+                  return (byte) getColour.getRed();
+              case 'G':
+                  return (byte) getColour.getGreen();
+              case 'B':
+                  return (byte) getColour.getBlue();
+              default:
+                  return (byte) 0;
+          }
     }
 
 }

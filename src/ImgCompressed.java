@@ -1,48 +1,44 @@
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-
 public class ImgCompressed {
     private int imgHeight;
     private int imgWidth;
-    private byte[] redRLCompressed;
-    private byte[] greenRLCompresed;
-    private byte[] blueRLCompressed;
+    private byte[] redRLCompressed; //ByteArray for compressed Red Level [colourValue, runLength, ..]
+    private byte[] greenRLCompressed; //ByteArray for compressed Green Level [colourValue, runLength, ..]
+    private byte[] blueRLCompressed; //ByteArray for compressed Blue Level [colourValue, runLength, ..]
 
-    private int totalByteSize = -1;
+    private int totalByteSize = -1; //Total Size of Red+Green+Blue in Bytes
+    private int compressLevel = -1; //Level of compression
 
-    public ImgCompressed(int width, int height, byte[] redRL, byte[] greenRL, byte[] blueRL)
+    /**
+     * Constructor for a compressed image that is stored in memory.
+     * Created by the Compression Algorithm
+     * @param width Image Width
+     * @param height Image Height
+     * @param redRL Red Compressed ByteArray
+     * @param greenRL Green Compress ByteArray
+     * @param blueRL Blue Compress Byte Array
+     * @param compresslevel What the range limit for the compression was.
+     */
+    public ImgCompressed(int width, int height, byte[] redRL, byte[] greenRL, byte[] blueRL, int compresslevel)
     {
         imgHeight = height;
         imgWidth = width;
         redRLCompressed = redRL;
-        greenRLCompresed = greenRL;
+        greenRLCompressed = greenRL;
         blueRLCompressed = blueRL;
-
+        compressLevel = compresslevel;
         totalByteSize = redRL.length + greenRL.length + blueRL.length;
 
-        System.out.println("Created a compressed image object!");
-        System.out.println("Size of image (amount of bytes): " + totalByteSize);
+        System.out.println("A compressed image object was created in memory. Total Size of Image (Bytes): " + totalByteSize);
     }
 
-    public int gettotalByteSize()
-    {
-        return totalByteSize;
-    }
+    public byte[] getRedCompressed() { return redRLCompressed; }
 
-    public byte[] getRedCompressed() //TODO: Merge into one function (Red/Green/Blue)
-    {
-        return redRLCompressed;
-    }
+    public byte[] getGreenCompressed() { return greenRLCompressed; }
 
-
-    public byte[] getGreenCompressed() {
-        return greenRLCompresed;
-    }
-
-    public byte[] getBlueCompressed() {
-        return blueRLCompressed;
-    }
+    public byte[] getBlueCompressed() { return blueRLCompressed; }
 
     public int getImgWidth()
     {
@@ -54,29 +50,46 @@ public class ImgCompressed {
         return imgHeight;
     }
 
-    public void outputToFile(String toPath, String fileName)
+    public int getTotalByteSize()
+    {
+        return totalByteSize;
+    }
+
+    public int getCompressLevel() { return compressLevel; }
+
+
+    /**
+     * Output the compressed image as a 'ckcomp' file.
+     * @param toPath Where the compressed image should be outputted.
+     */
+    public void outputToFile(String toPath)
     {
         try {
-            FileOutputStream fos = new FileOutputStream(toPath + fileName + ".ckcomp");
+            FileOutputStream fos = new FileOutputStream(toPath + "CompressedOutput.ckcomp");
             fos.write(Integer.toString(imgWidth).getBytes());
             fos.write(",".getBytes());
             fos.write(Integer.toString(imgHeight).getBytes());
+            fos.write(",".getBytes());
+            fos.write(Integer.toString(compressLevel).getBytes());
             fos.write("\n".getBytes());
             fos.write(redRLCompressed);
             fos.write("\n".getBytes());
-            fos.write(greenRLCompresed);
+            fos.write(greenRLCompressed);
             fos.write("\n".getBytes());
             fos.write(blueRLCompressed);
 
             fos.close();
-
-
-            System.out.println("The compressed image file was written successfully!!");
+            System.out.println("The compressed image file was written to the disk successfully (" + toPath + "CompressedOutput.ckcomp" + ")");
 
         }
         catch (IOException e) {
             System.out.println("An error occurred during picture export... " + e);
         }
+    }
+
+    public void readCompressedImageFile(String compressedPath)
+    {
+        //TODO
     }
 
 }
